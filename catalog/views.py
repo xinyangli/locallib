@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db.models import F
+from django.urls import reverse
 from .models import Book, Author
-
 
 def index(request):
     """View funciton for home page of site."""
@@ -28,12 +28,26 @@ def book_detail(request, bookId):
 
 
 def author(request):
-    author_list = Author.objects.all().annotate(title=F('name'))
+    author_list = Author.objects.all().annotate(title=F('name'), id=F('authorId'))
+    url = request.get_full_path()
     context = {
+        "url": url,
         "card_list": author_list,
         "no_item_warning": "There is no author information"
     }
     return render(request, 'author.html', context=context)
+
+
+def author_detail(request, authorId):
+    author = Author.objects.get(authorId=authorId)
+    book_list = Book.objects.filter(authorId=author).all().annotate(id=F('bookId'))
+    book_url = reverse('book')
+    context = {
+        "url": book_url,
+        "card_list": book_list,
+        "author": author,
+    }
+    return render(request, 'author_detail.html', context=context)
 
 
 def search(request):

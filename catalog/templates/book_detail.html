@@ -25,10 +25,11 @@
             </ul>
         </div>
     </div>
-    <div class="row p-3 justify-content-center">
+    <div class="row p-3 justify-content-around">
         <div class="col-md-6 flex-shrink-1">
             <h5 class="mb-3" style="color: cornflowerblue">Description</h5>
             <p>{{ book.description|linebreaksbr }}</p>
+            <br>
             <h5 class="mb-3" style="color: cornflowerblue">About author</h5>
             <p>{{ book.authorId.description|linebreaksbr }}</p>
         </div>
