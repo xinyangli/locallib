@@ -1,10 +1,26 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="input-group p-4">
-    <input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-    <button type="button" class="btn btn-outline-dark">search</button>
-</div>
-<hr>
-{% include "cards.html" %}
+    <form action="" method="get">
+        <div class="input-group p-4">
+            <input type="search" class="form-control" placeholder="Search" {% if query %}
+                   value="{{ query }}" {% endif %}
+                   aria-label="Search" aria-describedby="search-addon" name="s" required/>
+            <button type="submit" class="btn btn-outline-dark">search</button>
+        </div>
+    </form>
+    {% if book_list %}
+        <h2>Books</h2>
+        <hr>
+        {% with card_list=book_list %}
+            {% include "cards.html" %}
+        {% endwith %}
+    {% endif %}
+    {% if author_list %}
+        <h2>Authors</h2>
+        <hr>
+        {% with card_list=author_list %}
+            {% include "cards.html" %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}

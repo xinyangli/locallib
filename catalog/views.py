@@ -27,4 +27,14 @@ def author(request):
 
 
 def search(request):
-    return render(request, 'search.html')
+    s = request.GET.get('s', None)
+    if s is None:
+        return render(request, 'search.html')
+    book_list = Book.objects.filter(title__contains=s)
+    author_list = Author.objects.filter(name__contains=s).annotate(title=F('name'))
+    context = {
+        "book_list": book_list,
+        "author_list": author_list,
+        "query": s
+    }
+    return render(request, 'search.html', context=context)
