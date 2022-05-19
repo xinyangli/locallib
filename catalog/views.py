@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.db.models import F
+from .models import Book, Author
 
 
 def index(request):
@@ -7,11 +9,21 @@ def index(request):
 
 
 def book(request):
-    return render(request, 'book.html')
+    book_list = Book.objects.all()
+    context = {
+        "card_list": book_list,
+        "no_item_warning": "There are no books in the library"
+    }
+    return render(request, 'book.html', context=context)
 
 
 def author(request):
-    return render(request, 'author.html')
+    author_list = Author.objects.all().annotate(title=F('name'))
+    context = {
+        "card_list": author_list,
+        "no_item_warning": "There is no author information"
+    }
+    return render(request, 'author.html', context=context)
 
 
 def search(request):

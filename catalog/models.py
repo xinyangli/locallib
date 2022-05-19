@@ -12,7 +12,7 @@ class Book(models.Model):
     pressId = models.ForeignKey('Press', on_delete=models.SET_NULL, null=True, blank=True)
     genreId = models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(null=True)
-    image = models.ImageField(null=True)
+    image = models.ImageField(upload_to='books', null=True, blank=True)
 
     class Meta:
         ordering = ['bookId']
@@ -61,7 +61,7 @@ class Author(models.Model):
     death = models.DateField(null=True, blank=True)
     nationality = CountryField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='authors', null=True, blank=True)
 
     class Meta:
         ordering = ['authorId']
