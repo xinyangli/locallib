@@ -9,12 +9,22 @@ def index(request):
 
 
 def book(request):
-    book_list = Book.objects.all()
+    book_list = Book.objects.all().annotate(id=F('bookId'))
+    url = request.get_full_path()
     context = {
+        "url": url,
         "card_list": book_list,
         "no_item_warning": "There are no books in the library"
     }
     return render(request, 'book.html', context=context)
+
+
+def book_detail(request, bookId):
+    book = Book.objects.get(bookId=bookId)
+    context = {
+        "book": book,
+    }
+    return render(request, 'book_detail.html', context=context)
 
 
 def author(request):

@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <div class="row text-center mb-3">
+        <h3 class="text-nowrap">{{ book.title }}</h3>
+    </div>
+    <div class="row p-3 h-auto">
+        <div class="col align-self-center">
+            <img src="{{ book.image.url }}" class="img-fluid float-end h-100"/>
+        </div>
+        <div class="col ">
+            <ul>
+                <li class="list-group-item">
+                    <span class="text-black-50">Author: </span>{{ book.authorId.name }}
+                </li>
+                <li class="list-group-item">
+                    <span class="text-black-50">Press: </span>{{ book.pressId.name }}
+                </li>
+                <li class="list-group-item">
+                    <span class="text-black-50">ISBN: </span>{{ book.ISBN }}
+                </li>
+                <li class="list-group-item">
+                    <span class="text-black-50">Genre: </span>{{ book.genreId.name }}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row p-3 justify-content-center">
+        <div class="col-md-6 flex-shrink-1">
+            <h5 class="mb-3" style="color: cornflowerblue">Description</h5>
+            <p>{{ book.description|linebreaksbr }}</p>
+            <h5 class="mb-3" style="color: cornflowerblue">About author</h5>
+            <p>{{ book.authorId.description|linebreaksbr }}</p>
+        </div>
+    </div>
+{% endblock %}

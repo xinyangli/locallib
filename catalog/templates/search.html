@@ -23,4 +23,7 @@
             {% include "cards.html" %}
         {% endwith %}
     {% endif %}
+    {% if not book_list and not author_list and query %}
+        <p class="text-center">No search result</p>
+    {% endif %}
 {% endblock %}
