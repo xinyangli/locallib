@@ -57,7 +57,7 @@ ROOT_URLCONF = 'locallib.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +132,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Handle user upload files (book cover, author photo)
 MEDIA_ROOT = 'media'
 MEDIA_URL = 'media/'
+
+# Redirect to home after login
+LOGIN_REDIRECT_URL = '/'

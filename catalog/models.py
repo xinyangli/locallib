@@ -1,18 +1,21 @@
 from django.db import models
 from django_countries.fields import CountryField
+from django.contrib.auth import get_user_model
+from datetime import datetime, timedelta
+from . import *
 
 
 class Book(models.Model):
-    # Fields here
     bookId = models.AutoField(primary_key=True)
     ISBN = models.CharField(max_length=13)
     title = models.CharField(max_length=45)
-    recordId = models.ForeignKey('Record', on_delete=models.SET_NULL, null=True, blank=True)
-    authorId = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True, blank=True)
-    pressId = models.ForeignKey('Press', on_delete=models.SET_NULL, null=True, blank=True)
-    genreId = models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
+    record = models.ForeignKey('Record', on_delete=models.SET_NULL, null=True, blank=True)
+    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True, blank=True)
+    press = models.ForeignKey('Press', on_delete=models.SET_NULL, null=True, blank=True)
+    # genreId = models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(null=True)
-    image = models.ImageField(upload_to='books', null=True, blank=True)
+    image = models.ImageField(upload_to='books', blank=True, default="cover.jpg")
+    genre = models.ManyToManyField(to='Genre', related_name='Book')
 
     class Meta:
         ordering = ['bookId']
@@ -21,10 +24,40 @@ class Book(models.Model):
         return "{} - {}".format(self.title, self.ISBN)
 
 
+class BookInstance(models.Model):
+    binstanceId = models.AutoField(primary_key=True)
+    # on_shelf = models.BooleanField(default=True)
+    position = models.CharField(max_length=45)
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+
+    class Meta:
+        pass
+
+    def __str__(self):
+        return self.book.title + str(self.binstanceId)
+
+    def borrow(self, user):
+        record = {
+            "reader": user,
+            "binstance": self,
+            "start": datetime.now(),
+            "due": datetime.now() + timedelta(days=30)
+        }
+        record = Record.objects.create(**record)
+        record.save()
+
+    @property
+    def on_shelf(self):
+        record = Record.objects.get(binstance=self, returned=False)
+        if record:
+            return True
+        return False
+
+
 class Press(models.Model):
     pressId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=45)
-    description = models.CharField(max_length=45)
+    description = models.CharField(max_length=45, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -61,7 +94,7 @@ class Author(models.Model):
     death = models.DateField(null=True, blank=True)
     nationality = CountryField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='authors', null=True, blank=True)
+    image = models.ImageField(upload_to='authors', blank=True, default="author.png")
 
     class Meta:
         ordering = ['authorId']
@@ -71,11 +104,12 @@ class Author(models.Model):
 
 
 class Record(models.Model):
-    recordId = models.IntegerField(primary_key=True)
-    readerId = models.ForeignKey('Reader', on_delete=models.RESTRICT)
-    bookId = models.ForeignKey('Book', on_delete=models.RESTRICT)
+    recordId = models.AutoField(primary_key=True)
+    reader = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    binstance = models.ForeignKey('BookInstance', on_delete=models.CASCADE)
     start = models.DateTimeField()
     due = models.DateTimeField(null=True)
+    returned = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.recordId)

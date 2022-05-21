@@ -1,37 +1,78 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+    <p>{{ borrow }}</p>
     <div class="row text-center mb-3">
         <h3 class="text-nowrap">{{ book.title }}</h3>
     </div>
-    <div class="row p-3 h-auto">
+    <div class="row p-3">
         <div class="col align-self-center">
             <img src="{{ book.image.url }}" class="img-fluid float-end h-100"/>
         </div>
-        <div class="col ">
-            <ul>
+        <div class="col d-flex flex-column">
+            <ul class="p-0">
                 <li class="list-group-item">
-                    <span class="text-black-50">Author: </span>{{ book.authorId.name }}
+                    <span class="text-black-50">Author: </span>{{ book.author.name }}
                 </li>
                 <li class="list-group-item">
-                    <span class="text-black-50">Press: </span>{{ book.pressId.name }}
+                    <span class="text-black-50">Press: </span>{{ book.press.name }}
                 </li>
                 <li class="list-group-item">
                     <span class="text-black-50">ISBN: </span>{{ book.ISBN }}
                 </li>
                 <li class="list-group-item">
-                    <span class="text-black-50">Genre: </span>{{ book.genreId.name }}
+                    <span class="text-black-50">Genre: </span>
+                    {% for genre in book.genre.all %}
+                        {{ genre }}
+                    {% endfor %}
                 </li>
             </ul>
+            <div class="flex-grow-1"></div>
+            <div>
+                <a class="text-reset text-decoration-none" href="https://www.douban.com/search?q={{ book.ISBN }}" target="_blank">
+                    <button type="button" class="btn btn-light align-self-end" style="background-color: #41ac52; color:white">Douban</button>
+                </a>
+            </div>
         </div>
     </div>
     <div class="row p-3 justify-content-around">
-        <div class="col-md-6 flex-shrink-1">
-            <h5 class="mb-3" style="color: cornflowerblue">Description</h5>
+        <div class="col" style="max-width: 768px">
+            <h5 class="my-3" style="color: cornflowerblue">Description</h5>
             <p>{{ book.description|linebreaksbr }}</p>
-            <br>
-            <h5 class="mb-3" style="color: cornflowerblue">About author</h5>
-            <p>{{ book.authorId.description|linebreaksbr }}</p>
+            <h5 class="my-3" style="color: cornflowerblue">About author</h5>
+            <p>{{ book.author.description|linebreaksbr }}</p>
+            <h5 class="my-3" style="color: cornflowerblue">Status</h5>
+            <ul class="list-group">
+                {% for book_instance in book_instances %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-auto">
+                                {{ forloop.counter }}
+                            </div>
+                            <div class="col">
+                                {{ book_instance.position }}
+                            </div>
+                            <div class="col me-auto"></div>
+                            <div class="col text-end">
+                                {% if book_instance.on_shelf %}
+                                    <form action="" method="post">
+                                        {% csrf_token %}
+                                        <button class="btn align-self-end"
+                                                style="color: cornflowerblue; background: white"
+                                                type="submit" name="instance" value="{{ book_instance.binstanceId }}">
+                                            Borrow
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button type="button" class="btn shadow-none"
+                                            style="color: indianred; background: white; border: none">Loan
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock %}
