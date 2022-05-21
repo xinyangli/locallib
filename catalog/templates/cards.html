@@ -2,10 +2,10 @@
     {% if card_list %}
         {% for card in card_list %}
             <a href="{{ url }}{{ card.id }}" class="text-decoration-none">
-                <li class="card p-0 m-5 col-6" style="width: 15rem">
+                <li class="card p-0 m-5 col-6" style="width: 13rem">
                     <img class="card-img-top img-fluid overflow-hidden"
                          src="{{ card.image.url }} " alt="{{ card.title }}"
-                         style="height: 18rem">
+                         style="height: 18.4rem">
                     <div class="card-body">
                         <h5 class="card-title text-nowrap text-truncate text-black">{{ card.title }}</h5>
                         <p class="card-text text-truncate text-black-50">
