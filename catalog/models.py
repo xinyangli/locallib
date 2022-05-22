@@ -9,7 +9,6 @@ class Book(models.Model):
     bookId = models.AutoField(primary_key=True)
     ISBN = models.CharField(max_length=13)
     title = models.CharField(max_length=45)
-    record = models.ForeignKey('Record', on_delete=models.SET_NULL, null=True, blank=True)
     author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True, blank=True)
     press = models.ForeignKey('Press', on_delete=models.SET_NULL, null=True, blank=True)
     # genreId = models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
@@ -48,10 +47,11 @@ class BookInstance(models.Model):
 
     @property
     def on_shelf(self):
-        record = Record.objects.get(binstance=self, returned=False)
-        if record:
+        try:
+            record = Record.objects.get(binstance=self, returned=False)
+            return False
+        except Record.DoesNotExist:
             return True
-        return False
 
 
 class Press(models.Model):
