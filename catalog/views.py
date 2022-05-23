@@ -47,7 +47,7 @@ def author(request):
 
 def author_detail(request, authorId):
     author = Author.objects.get(authorId=authorId)
-    book_list = Book.objects.filter(authorId=author).all().annotate(id=F('bookId'))
+    book_list = Book.objects.filter(author=author).all().annotate(id=F('bookId'))
     book_url = reverse('book')
     context = {
         "url": book_url,
@@ -61,7 +61,7 @@ def search(request):
     s = request.GET.get('s', None)
     if s is None:
         return render(request, 'search.html')
-    book_list = Book.objects.filter(Q(title__contains=s) | Q(genre__name__contains=s))
+    book_list = Book.objects.filter(Q(title__contains=s) | Q(genre__name__contains=s)).distinct()
     author_list = Author.objects.filter(name__contains=s).annotate(title=F('name'))
     context = {
         "book_list": book_list,
